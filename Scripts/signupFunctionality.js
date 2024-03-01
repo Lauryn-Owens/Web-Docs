@@ -1,3 +1,4 @@
+// Selecting form and input elements
 const signupForm = document.querySelector("#signup__form");
 const email = document.querySelector("#email");
 const password = document.querySelector("#password");
@@ -9,12 +10,13 @@ const numberRequirement = document.querySelector("#number");
 const specialCharacterRequirement = document.querySelector("#special__character");
 const passwordErrorMessage = document.querySelector("#password__error__message");
 
+// eEvent listener for form submission
 signupForm.addEventListener("submit", (e) => {
-  //prevent the form from submitting by default
-  //only submit if signUp() returns true
+  // Prevent the form from submitting by default
+  // Only submit if validateForm() returns true
   e.preventDefault(); 
 
-  //validates  form
+  //validate form inputs
   const isValid = validateForm();
 
   if (isValid) {
@@ -22,16 +24,18 @@ signupForm.addEventListener("submit", (e) => {
   }
 });
 
+// function to validate form inputs
 function validateForm() {
-  // reset previous validation states
+  // empty/reset previous validation states
   const requirements = [lengthRequirement, lowerCaseRequirement, upperCaseRequirement, numberRequirement, specialCharacterRequirement];
   requirements.forEach((requirement) => {
     requirement.classList.remove("valid", "invalid");
   });
 
-  //form validation
+  // set form validation state
   let isValid = true;
 
+  // check/validate password length
   if (password.value.length < 8) {
     lengthRequirement.classList.add("invalid");
     isValid = false;
@@ -39,6 +43,7 @@ function validateForm() {
     lengthRequirement.classList.add("valid");
   }
 
+  // regular expression tests for password requirements
   const regexTests = [
     { regex: /[a-z]/g, requirement: lowerCaseRequirement },
     { regex: /[A-Z]/g, requirement: upperCaseRequirement },
@@ -46,6 +51,7 @@ function validateForm() {
     { regex: /[\@\#\$\%\*\&]/g, requirement: specialCharacterRequirement }
   ];
 
+  // iterate over regex tests and validate password requirements
   regexTests.forEach(({ regex, requirement }) => {
     if (!password.value.match(regex)) {
       requirement.classList.add("invalid");
@@ -55,6 +61,7 @@ function validateForm() {
     }
   });
 
+  // check/validate password and confirm password match
   if (confirmPassword.value !== password.value) {
     passwordErrorMessage.style.display = "block";
     passwordErrorMessage.style.color = "red";
@@ -64,6 +71,7 @@ function validateForm() {
     passwordErrorMessage.innerHTML = "";
   }
 
+  // check if email is already registered
   if (localStorage.getItem(email.value)) {
     passwordErrorMessage.style.display = "block";
     passwordErrorMessage.style.color = "red";
@@ -74,8 +82,12 @@ function validateForm() {
   return isValid;
 }
 
+// function that handles sign up process
 function signUp() {
+  // store email and password in local storage
   localStorage.setItem(email.value, password.value);
+  
+  //empty/reset input fields
   email.value = "";
   password.value = "";
   confirmPassword.value = "";
