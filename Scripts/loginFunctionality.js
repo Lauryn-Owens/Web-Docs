@@ -1,3 +1,4 @@
+//get inputs and buttons
 let email = document.querySelector("#email");
 let password = document.querySelector("#password");
 
@@ -7,40 +8,43 @@ const loginForm = document.querySelector("#login__form");
 const errorMessage = document.querySelector("#error__message");
 errorMessage.innerHTML = "";
 
-//keep an updated version of password
+//update password value on keyup
 password.addEventListener("keyup", (e) => {
-  password.value = getValue(e.target.value);
+  password.value = e.target.value;
 });
 
-function getValue(target) {
-  return target;
-}
-
+//add event listener to the form for form submission
 loginForm.addEventListener("submit", (e) => {
+  //call  the login() function 
   login(e);
 });
+
 function login(event) {
-  //get input values
+  //prevent form submission by default
+  event.preventDefault();
+
+  //retrieve input values
   const correctPassword = localStorage.getItem(email.value);
   const inputPassword = password.value;
-  //check if input password is the same as the stored password
-  if (correctPassword !== inputPassword) {
-    //don't refresh the page if login credentials are wrong
-    event.preventDefault();
+
+  //see/check if email exists in localStorage
+  if (correctPassword === null) {
+    //change/update error message when email is not found in localStorage
+    errorMessage.innerHTML = "This email is not registered, please sign up!!!";
+    return;
   }
 
-  try {
-    //check localStorage to see the login credentials is already set up
-    if (localStorage.getItem(email.value) === null) {
-      throw "This email is not registered, please sign up!!!";
-    }
-    if (localStorage.getItem(email.value) !== inputPassword) {
-      throw "Incorrect Password, Try Again!!!";
-    }
-  } catch (error) {
-    errorMessage.innerHTML = error;
+  //check if password matches the one stored in localStorage
+  if (correctPassword !== inputPassword) {
+    //display/update error message when password is incorrect
+    errorMessage.innerHTML = "Incorrect Password, Try Again!!!";
+    return;
   }
-  //reset inputs
+
+  //empty/reset error message when login is successful
+  errorMessage.innerHTML = "";
+
+  //empty/reset inputs after successful login
   email.value = "";
   password.value = "";
 }
