@@ -1,81 +1,81 @@
+// selecting list and header
 const bookmarkList = document.querySelector("#bookmark__list");
-
 const bookmarkHeader = document.querySelector("#bookmark__header");
 
-//on window load
-window.onload = bookmarkListOnLoad();
+/**run function to display no bookmakes on window load if the bookmark list is empty*/ 
+window.onload = bookmarkListOnLoad;
 
-/*render no bookmarked documents yet when bookmark list has no children
-onload bookmarkList will have no children because documents are only bookmarked per 
-session
-*/
 function bookmarkListOnLoad() {
   const onLoadBookmarkText = document.createElement("p");
   onLoadBookmarkText.setAttribute("id", "onLoadBookmarkText");
   onLoadBookmarkText.innerHTML = "No Bookmarked Documents Yet";
 
-  //add after bookmark header
+  //display the message after the bookmark header
   bookmarkHeader.insertAdjacentElement("afterend", onLoadBookmarkText);
 }
 
-/**Bookmarking document is unlimited you can bookmark a document as much as you want */
+//function to bookmark a document
 function bookmarkDocument(bookmarkButton, bookmarkDocumentTitle) {
   const parentElement = bookmarkButton.parentElement;
-  const currDocumentTitle = parentElement.querySelector(".document__title")
-    .value;
+  const currDocumentTitle = parentElement.querySelector(".document__title").value;
+
+  //creating a new bookmark list item
   const bookmarkListItem = document.createElement("li");
   bookmarkListItem.setAttribute("class", "bookmark__item");
   bookmarkListItem.innerHTML = currDocumentTitle;
-  //append buttons
+
+  //appending buttons to the bookmark list item
   bookmarkListItem.append(
-    appendGoToDocumentButton(
-      bookmarkButton,
-      parentElement.querySelector(".document__title")
-    ),
-    appendDeleteButton(parentElement)
+    appendGoToDocumentButton(parentElement.querySelector(".document__title")),
+    appendDeleteButton()
   );
-  //append bookmark list item
+
+  //inserting the bookmark list item into the bookmark list
   bookmarkList.insertAdjacentElement("beforeend", bookmarkListItem);
 
-  //remove the text no bookmark document text
+  //removing the no bookmarked documents yet message
   const noBookmarkText = document.querySelector("#onLoadBookmarkText");
   noBookmarkText.innerHTML = "";
 }
 
-function goToDocument(currButtonDocumentTitle) {
-  /*focus on its document title just in case a user wants to modify that document*/
-  currButtonDocumentTitle.focus();
+//function to focus on the document title when go to document button is clicked
+function goToDocument(currGoToDocumentTitle) {
+  currGoToDocumentTitle.focus();
 }
-function appendGoToDocumentButton(currGoToDocument, currGoToDocumentTitle) {
+
+//function to create and append the go to document button
+function appendGoToDocumentButton(currGoToDocumentTitle) {
   const goToDocumentButton = document.createElement("button");
   goToDocumentButton.setAttribute("class", "go__to__document");
   goToDocumentButton.innerHTML = "&#43;";
 
-  //click event for go to document button
-  goToDocumentButton.addEventListener("click", (currButton) => {
+  //adding click event listener to the go to document button
+  goToDocumentButton.addEventListener("click", () => {
     goToDocument(currGoToDocumentTitle);
   });
+
   return goToDocumentButton;
 }
 
+//function to create and append the delete button
 function appendDeleteButton() {
   const deleteButton = document.createElement("button");
   deleteButton.setAttribute("class", "bookmark__delete__btn");
   deleteButton.innerHTML = "&#10005;";
 
-  //click event for delete bookmark list item
-  deleteButton.addEventListener("click", (currListItem) => {
-    deleteBookmarkItem(currListItem.target);
+  //adding click event listener to the delete button
+  deleteButton.addEventListener("click", (event) => {
+    deleteBookmarkItem(event.target.parentElement);
   });
+
   return deleteButton;
 }
 
+//function to delete a bookmark list item
 function deleteBookmarkItem(currBookmarkItem) {
-  const parentElement = currBookmarkItem.parentElement;
-  parentElement.remove();
-  
-  /*if the last bookmarked document is being deleted
-   render the no bookmarked document text*/
+  currBookmarkItem.remove();
+
+  //display "no bookmarked documents yet" message if the bookmark list is empty
   if (!bookmarkList.children.length) {
     const noBookmarkText = document.querySelector("#onLoadBookmarkText");
     noBookmarkText.innerHTML = "No Bookmarked Documents Yet";
